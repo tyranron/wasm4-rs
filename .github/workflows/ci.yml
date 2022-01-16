@@ -1,0 +1,145 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+    tags: ["v*"]
+  pull_request:
+    branches: ["main"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  RUST_BACKTRACE: 1
+
+jobs:
+
+  ##########################
+  # Linting and formatting #
+  ##########################
+
+  clippy:
+    if: ${{ github.ref == 'refs/heads/main'
+            || startsWith(github.ref, 'refs/tags/wasm4-')
+            || !contains(github.event.head_commit.message, '[skip ci]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          components: clippy
+
+      - run: cargo clippy --workspace --all-features -- -D warnings
+
+  rustfmt:
+    if: ${{ github.ref == 'refs/heads/main'
+            || startsWith(github.ref, 'refs/tags/wasm4-')
+            || !contains(github.event.head_commit.message, '[skip ci]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly
+          components: rustfmt
+
+      - run: cargo fmt --all --check
+
+
+
+
+  ###########
+  # Testing #
+  ###########
+
+  msrv:
+    name: MSRV
+    if: ${{ github.ref == 'refs/heads/main'
+            || startsWith(github.ref, 'refs/tags/wasm4-')
+            || !contains(github.event.head_commit.message, '[skip ci]') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        msrv: ["1.56.0"]
+        crate:
+          - wasm4-common
+          - wasm4-impl
+          - wasm4-sys
+          - wasm4
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.msrv }}
+          override: true
+
+      - run: cargo +nightly update -Z minimal-versions
+
+      - run: cargo check -p ${{ matrix.crate }} --all-features
+
+  test:
+    if: ${{ github.ref == 'refs/heads/main'
+            || startsWith(github.ref, 'refs/tags/wasm4-')
+            || !contains(github.event.head_commit.message, '[skip ci]') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        crate:
+          - wasm4-common
+          - wasm4-impl
+          - wasm4-sys
+          - wasm4
+        toolchain:
+          - stable
+          - beta
+          - nightly
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.toolchain }}
+          override: true
+
+      - run: cargo test -p ${{ matrix.crate }} --all-features
+
+
+
+
+  #################
+  # Documentation #
+  #################
+
+  rustdoc:
+    if: ${{ github.ref == 'refs/heads/main'
+            || startsWith(github.ref, 'refs/tags/wasm4-')
+            || !contains(github.event.head_commit.message, '[skip ci]') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        crate:
+          - wasm4-common
+          - wasm4-impl
+          - wasm4-sys
+          - wasm4
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+
+      - run: cargo doc -p ${{ matrix.crate }} --all-features
