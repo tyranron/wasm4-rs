@@ -79,11 +79,11 @@ jobs:
         with:
           profile: minimal
           toolchain: nightly
-          target: wasm32-unknown-unknown
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
           toolchain: ${{ matrix.msrv }}
+          target: wasm32-unknown-unknown
           override: true
 
       - run: cargo +nightly update -Z minimal-versions
@@ -102,6 +102,9 @@ jobs:
           - wasm4-impl
           - wasm4-sys
           - wasm4
+          # examples/
+          - sans
+          - ticking
         toolchain:
           - stable
           - beta
@@ -116,7 +119,7 @@ jobs:
           target: wasm32-unknown-unknown
           override: true
 
-      - run: cargo test -p ${{ matrix.crate }} --all-features
+      - run: cargo test -p ${{ matrix.crate }} --all-features --no-run
 
 
 
