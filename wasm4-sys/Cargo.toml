@@ -1,10 +1,13 @@
 [package]
 name = "wasm4-sys"
 version = "0.1.0"
+edition = "2021"
+rust-version = "1.56"
+description = "Raw WASM-4 bindings for Rust, used internally wasm4-rs"
 authors = ["Daria Sukhonina <dariasukhonina@gmail.com>"]
 license = "ISC"
+documentation = "https://docs.rs/wasm4-sys"
+homepage = "https://github.com/ZetaNumbers/wasm4-rs/tree/main/wasm4-sys"
 repository = "https://github.com/ZetaNumbers/wasm4-rs"
-description = "Raw WASM-4 bindings for Rust, used internally wasm4-rs"
 keywords = ["wasm-4", "wasm4"]
 categories = ["external-ffi-bindings", "wasm"]
-edition = "2021"

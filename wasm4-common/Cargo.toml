@@ -1,11 +1,12 @@
 [package]
 name = "wasm4-common"
 version = "0.1.1"
+edition = "2021"
+rust-version = "1.56"
+description = "Functionality which used from proc_macro and regular libraries for WASM-4 bindings"
 authors = ["Daria Sukhonina <dariasukhonina@gmail.com>"]
 license = "ISC"
+documentation = "https://docs.rs/wasm4-common"
+homepage = "https://github.com/ZetaNumbers/wasm4-rs/tree/main/wasm4-common"
 repository = "https://github.com/ZetaNumbers/wasm4-rs"
-description = "functionality which used from proc_macro and regular libraries for WASM-4 bindings"
 keywords = ["wasm-4", "wasm4"]
-edition = "2021"
-
-[dependencies]

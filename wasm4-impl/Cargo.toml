@@ -1,12 +1,15 @@
 [package]
 name = "wasm4-impl"
 version = "0.1.0"
+edition = "2021"
+rust-version = "1.56"
+description = "Procedural macro implementations for WASM-4 bindings"
 authors = ["Daria Sukhonina <dariasukhonina@gmail.com>"]
 license = "ISC"
+documentation = "https://docs.rs/wasm4-impl"
+homepage = "https://github.com/ZetaNumbers/wasm4-rs/tree/main/wasm4-impl"
 repository = "https://github.com/ZetaNumbers/wasm4-rs"
-description = "procedural macro implementations for WASM-4 bindings"
 keywords = ["wasm-4", "wasm4"]
-edition = "2021"
 
 [lib]
 proc-macro = true
@@ -21,6 +24,10 @@ proc-macro2 = "1.0.36"
 quote = "1.0.14"
 syn = { version = "1.0.85", features = ["extra-traits"] }
 
+# incorrect transitive minimals
+rayon = "1.5"
+tap = "1.0.1"
+
 [dependencies.wasm4-common]
 path = "../wasm4-common"
-version = "^0.1.0"
+version = "0.1.0"
